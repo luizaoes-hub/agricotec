@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agricotec</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --primary:#16578b;
+      --secondary:#62a744;
+      --bg:#90b330;
+      --white:#ffffff;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"Poppins",sans-serif;background:var(--bg);color:var(--white)}
+    
+  
+    .hero{
+      height:85vh;min-height:620px;
+      background:url("https://i.imgur.com/G60JzST.png") center/cover no-repeat;
+      display:flex;justify-content:center;align-items:center
+    }
+    .hero img{max-width:360px;animation:fadeIn 1s ease-out forwards;opacity:0}
+    
+  
+    .chat-container{
+      max-width:700px;margin:-100px auto 6rem;
+      background:#fff;border-radius:16px;padding:2rem;color:#000
+    }
+    .chat-log{max-height:340px;overflow-y:auto;margin-bottom:1rem}
+    .message{margin:.75rem 0;padding:.75rem 1rem;border-radius:12px;opacity:0;animation:slideFade .4s forwards}
+    .message.user{background:var(--primary);color:#fff;text-align:right}
+    .message.bot{background:var(--secondary);color:#fff;white-space:pre-line}
+    .input-wrap{display:flex;gap:.6rem}
+    .input-wrap input{flex:1;padding:.75rem;border:1px solid #ccc;border-radius:50px;font-size:1rem}
+    .input-wrap button{padding:.75rem 1.5rem;border:none;border-radius:50px;font-weight:600;cursor:pointer;background:var(--primary);color:#fff;transition:.3s}
+    .input-wrap button:hover{background:var(--secondary)}
+    
+   
+    .about{
+      background:url("https://i.imgur.com/xAYP8UB.png") center/cover no-repeat;
+      padding:4rem 1rem 3rem;
+      text-align:center;
+      color:#fff;
+      margin-bottom:3rem;
+    }
+    .about h2{font-size:2rem;margin-bottom:1.5rem;text-shadow:1px 1px 2px #000}
+    .about p{max-width:860px;margin:.75rem auto;text-shadow:1px 1px 2px #000}
+    
+   
+    footer{text-align:center;background:#77981d;padding:2rem 1rem;color:#fff}
+    
+  
+    @keyframes fadeIn{to{opacity:1}}
+    @keyframes slideFade{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+    .chat-log::-webkit-scrollbar{width:6px}
+    .chat-log::-webkit-scrollbar-thumb{background:var(--primary);border-radius:4px}
+  </style>
+</head>
+<body>
+
+  <section class="hero">
+    <img src="https://i.imgur.com/v6YCor4.png" style="max-width: 35%; margin-top: -150px;" alt="Logo Agrotec" />
+  </section>
+
+
+  <main class="chat-container">
+    <div id="chatLog" class="chat-log"></div>
+    <div class="input-wrap">
+      <input id="userInput" type="text" placeholder="Digite aqui…" autocomplete="off" />
+      <button onclick="handleInput()">Enviar</button>
+    </div>
+  </main>
+
+  
+  <section class="about" id="about">
+    <h2>Conheça o projeto Agricotec</h2>
+    <p>Os alunos do 3º ano D do curso técnico em Desenvolvimento de Sistemas da Escola Estadual Newton Câmara Leal Barros desenvolveram uma horta suspensa utilizando materiais recicláveis, apresentada na primeira Feira de Ciências da escola.</p>
+    <p>Combinando tecnologia, sustentabilidade e inovação, criaram e arquitetaram este site interativo onde você conhece as hortaliças presentes na horta e aprende a montar sua própria horta em casa.</p>
+  </section>
+
+
+  <footer>
+    <p>Desenvolvido por: Aluno 1, Aluno 2, Aluno 3 e Aluno 4  •  © 2025</p>
+  </footer>
+
+  <script>
+ 
+    const chatLog  = document.getElementById("chatLog");
+    const userInput= document.getElementById("userInput");
+
+  
+    let nome = "";
+    let etapa= "askName";           
+    const menuPrincipal = `
+Como posso te ajudar? Selecione uma opção:
+
+1 - Montar minha horta suspensa com materiais recicláveis
+2 - Conhecer sobre as hortaliças
+3 - Saber como o projeto foi desenvolvido`;
+    const menuHortas = `
+Sobre qual hortaliça você gostaria de conhecer? Selecione uma das opções:
+
+A - Alface
+B - Manjericão
+C - Alecrim
+D - Rúcula
+E - Outro elemento`;
+
+    const respostasHortas = {
+      A: "TEXTOTEXTOTEXTOTEXTOTEXTO sobre alface.",
+      B: "TEXTOTEXTOTEXTOTEXTOTEXTO sobre manjericão.",
+      C: "TEXTOTEXTOTEXTOTEXTOTEXTO sobre alecrim.",
+      D: "TEXTOTEXTOTEXTOTEXTOTEXTO sobre rúcula.",
+      E: "TEXTOTEXTOTEXTOTEXTOTEXTO sobre o outro elemento."
+    };
+
+  
+    function appendMsg(text, sender = "bot"){
+      const div = document.createElement("div");
+      div.className = `message ${sender}`;
+      div.textContent = text;
+      chatLog.appendChild(div);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+    function bot(text, delay=300){ setTimeout(()=>appendMsg(text,"bot"), delay); }
+
+  
+    function handleInput(){
+      const msg = userInput.value.trim();
+      if(!msg) return;
+      appendMsg(msg,"user");
+      userInput.value="";
+
+      if(etapa==="askName"){
+        nome = msg;
+        bot(`Muito prazer, ${nome}!`);
+        bot(menuPrincipal.replace("${nome}",nome),600);
+        etapa="mainMenu";
+      }
+      else if(etapa==="mainMenu"){
+        switch(msg){
+          case "1":
+            bot(`${nome}, TEXTOTEXTOTEXTOTEXTOTEXTO`);
+            askMore();
+            break;
+          case "2":
+            bot(menuHortas.replace("${nome}",nome));
+            etapa="submenuHortas";
+            break;
+          case "3":
+            bot(`${nome}, TEXTOTEXTOTEXTOTEXTOTEXTO`);
+            askMore();
+            break;
+          default:
+            bot(`Desculpe, ${nome}, não entendi. Digite 1, 2 ou 3.`);
+        }
+      }
+      else if(etapa==="submenuHortas"){
+        const key = msg.toUpperCase();
+        if(respostasHortas[key]){
+          bot(`${nome}, ${respostasHortas[key]}`);
+          askMore();
+        }else{
+          bot(`Opção inválida, ${nome}. Escolha A, B, C, D ou E.`);
+        }
+      }
+    }
+
+    function askMore(){
+      bot(`Posso ajudar em algo mais, ${nome}?`);
+      bot(menuPrincipal.replace("${nome}",nome),600);
+      etapa="mainMenu";
+    }
+
+    
+    window.onload = ()=>bot("Olá! Eu sou o chat do projeto Agricotec, qual seu nome?");
+    
+    userInput.addEventListener("keydown",e=>{if(e.key==="Enter")handleInput();});
+  </script>
+</body>
+</html>
