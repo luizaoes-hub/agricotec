@@ -88,97 +88,131 @@
 
   <script>
  
-    const chatLog  = document.getElementById("chatLog");
-    const userInput= document.getElementById("userInput");
-
-  
-    let nome = "";
-    let etapa= "askName";           
-    const menuPrincipal = `
+    // Elementos da interface
+const chatLog = document.getElementById("chatLog");
+const userInput = document.getElementById("userInput");
+ 
+// Variáveis de controle
+let nome = "";
+let etapa = "askName";
+ 
+// Textos do menu principal e submenu
+const menuPrincipal = `
 Como posso te ajudar? Selecione uma opção:
-
-1 - Montar minha horta suspensa com materiais recicláveis
-2 - Conhecer sobre as hortaliças
-3 - Saber como o projeto foi desenvolvido`;
-    const menuHortas = `
+ 
+1 - Como montar minha horta suspensa com materiais recicláveis
+2 - Como conhecer sobre as hortaliças
+3 - Quero saber como o projeto foi desenvolvido`;
+ 
+const menuHortas = `
 Sobre qual hortaliça você gostaria de conhecer? Selecione uma das opções:
-
+ 
 A - Alface
 B - Manjericão
 C - Alecrim
 D - Rúcula
-E - Outro elemento`;
-
-    const respostasHortas = {
-      A: "TEXTOTEXTOTEXTOTEXTOTEXTO sobre alface.",
-      B: "TEXTOTEXTOTEXTOTEXTOTEXTO sobre manjericão.",
-      C: "TEXTOTEXTOTEXTOTEXTOTEXTO sobre alecrim.",
-      D: "TEXTOTEXTOTEXTOTEXTOTEXTO sobre rúcula.",
-      E: "TEXTOTEXTOTEXTOTEXTOTEXTO sobre o outro elemento."
-    };
-
-  
-    function appendMsg(text, sender = "bot"){
-      const div = document.createElement("div");
-      div.className = `message ${sender}`;
-      div.textContent = text;
-      chatLog.appendChild(div);
-      chatLog.scrollTop = chatLog.scrollHeight;
+E - Coentro`;
+ 
+const respostasHortas = {
+  A: "A alface (Lactuca sativa) é uma das hortaliças mais populares, reconhecida por seu sabor fresco e benefícios nutricionais. Baixa em calorias e rica em vitaminas A, C e K, além de minerais como ferro e cálcio, sua alta composição de água a torna hidratante e ideal para climas quentes. Cultivada em diversas variedades, cada uma com características únicas, é perfeita para diferentes pratos e preparações.",
+  B: "O manjericão (Ocimum basilicum) é uma erva aromática amplamente utilizada na culinária, famosa por seu sabor intenso e aroma característico. Originário da Índia e de regiões tropicais, essa planta perene é valorizada tanto em jardins quanto em cozinhas. Além de saboroso, o manjericão é benéfico à saúde, contendo antioxidantes e propriedades anti-inflamatórias, além de ser uma boa fonte de vitaminas A e K e minerais como cálcio e magnésio.",
+  C: "O alecrim (Rosmarinus officinalis) é uma erva aromática popular na culinária, conhecida por seu aroma forte e sabor característico. Originário da região do Mediterrâneo, essa planta perene se destaca em jardins e pratos diversos. Além de saboroso, o alecrim possui propriedades benéficas à saúde, sendo rico em antioxidantes e compostos anti-inflamatórios, além de ser uma boa fonte de vitaminas A e C, cálcio e ferro. Seu uso pode auxiliar na digestão e na melhora da memória.",
+  D: "A rúcula (Eruca sativa) é uma planta da família Brassicaceae, conhecida por suas folhas verdes escuras e sabor picante. Amplamente utilizada em saladas, é valorizada por seu gosto distinto e benefícios à saúde. Rica em vitaminas A, C e K, além de minerais como cálcio e potássio, a rúcula possui alta concentração de antioxidantes e baixo teor calórico, tornando-a uma excelente opção para dietas saudáveis.",
+  E: "O coentro (Coriandrum sativum) é uma erva aromática amplamente utilizada na culinária global, conhecida por seu aroma distinto e sabor refrescante. Rico em nutrientes, como vitaminas A, C e K, além de minerais como ferro e potássio, o coentro também contém antioxidantes e compostos anti-inflamatórios, que podem beneficiar a digestão e a saúde cardiovascular."
+};
+ 
+// Função para exibir mensagem no chat
+function appendMsg(text, sender = "bot") {
+  const div = document.createElement("div");
+  div.className = `message ${sender}`;
+  div.textContent = text;
+  chatLog.appendChild(div);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+ 
+// Função para enviar mensagem do "bot"
+function bot(text, delay = 300) {
+  setTimeout(() => appendMsg(text, "bot"), delay);
+}
+ 
+// Lógica do chat
+function handleInput() {
+  const msg = userInput.value.trim();
+  if (!msg) return;
+  appendMsg(msg, "user");
+  userInput.value = "";
+ 
+  if (etapa === "askName") {
+    nome = msg;
+    bot(`Muito prazer, ${nome}!`);
+    bot(menuPrincipal.replace("${nome}", nome), 600);
+    etapa = "mainMenu";
+ 
+  } else if (etapa === "mainMenu") {
+    switch (msg) {
+      case "1":
+        bot(`${nome}, Montar uma horta suspensa com materiais recicláveis é simples e sustentável! Veja o passo a passo:
+        🧰 Materiais necessários:
+        Garrafas PET (2 litros ou 1,5L)
+        Tesoura ou estilete
+        Barbante, arame ou fita resistente
+        Terra adubada
+        Mudas ou sementes (alface, rúcula, manjericão, etc.)
+        Pregos e martelo (para pendurar) ou uma estrutura de madeira/canos PVC
+        🪛 Passo a passo:
+        Corte as garrafas PET no sentido horizontal, criando um espaço para plantar.
+        Faça furos no fundo das garrafas para drenagem e nas laterais para passar o barbante.
+        Passe o barbante pelas laterais para poder pendurá-las verticalmente em uma parede, cerca ou suporte.
+        Encha as garrafas com terra e plante as sementes ou mudas.
+        Regue regularmente e deixe em local com boa luz solar (pelo menos 4 horas por dia).
+        🌱 Dica:
+        Comece com hortaliças simples como alface, manjericão ou rúcula, que crescem rápido e exigem poucos cuidados.`);
+        askMore();
+        break;
+      case "2":
+        bot(menuHortas.replace("${nome}", nome));
+        etapa = "submenuHortas";
+        break;
+      case "3":
+        bot(`${nome}, O projeto foi desenvolvido pelos alunos do 3º ano da Escola Estadual do Newton Câmara Leal do curso técnico em Desenvolvimento de Sistemas, com o objetivo de integrar conhecimento técnico e sustentabilidade.
+        Começamos pesquisando sobre hortas sustentáveis e descobrimos formas de reutilizar materiais recicláveis, como garrafas PET, para criar uma horta suspensa funcional.
+        Em paralelo, usamos nossas habilidades de programação para desenvolver um site interativo, onde qualquer pessoa pode:
+        Aprender a montar sua própria horta,
+        Conhecer as hortaliças cultivadas,
+        E entender como aplicamos tecnologia no projeto.
+        O projeto foi apresentado na Feira de Ciências da escola, unindo práticas ambientais e inovação digital.`);
+        askMore();
+        break;
+      default:
+        bot(`Desculpe, ${nome}, não entendi. Digite 1, 2 ou 3.`);
     }
-    function bot(text, delay=300){ setTimeout(()=>appendMsg(text,"bot"), delay); }
-
-  
-    function handleInput(){
-      const msg = userInput.value.trim();
-      if(!msg) return;
-      appendMsg(msg,"user");
-      userInput.value="";
-
-      if(etapa==="askName"){
-        nome = msg;
-        bot(`Muito prazer, ${nome}!`);
-        bot(menuPrincipal.replace("${nome}",nome),600);
-        etapa="mainMenu";
-      }
-      else if(etapa==="mainMenu"){
-        switch(msg){
-          case "1":
-            bot(`${nome}, TEXTOTEXTOTEXTOTEXTOTEXTO`);
-            askMore();
-            break;
-          case "2":
-            bot(menuHortas.replace("${nome}",nome));
-            etapa="submenuHortas";
-            break;
-          case "3":
-            bot(`${nome}, TEXTOTEXTOTEXTOTEXTOTEXTO`);
-            askMore();
-            break;
-          default:
-            bot(`Desculpe, ${nome}, não entendi. Digite 1, 2 ou 3.`);
-        }
-      }
-      else if(etapa==="submenuHortas"){
-        const key = msg.toUpperCase();
-        if(respostasHortas[key]){
-          bot(`${nome}, ${respostasHortas[key]}`);
-          askMore();
-        }else{
-          bot(`Opção inválida, ${nome}. Escolha A, B, C, D ou E.`);
-        }
-      }
+ 
+  } else if (etapa === "submenuHortas") {
+    const key = msg.toUpperCase();
+    if (respostasHortas[key]) {
+      bot(`${nome}, ${respostasHortas[key]}`);
+      askMore();
+    } else {
+      bot(`Opção inválida, ${nome}. Escolha A, B, C, D ou E.`);
     }
-
-    function askMore(){
-      bot(`Posso ajudar em algo mais, ${nome}?`);
-      bot(menuPrincipal.replace("${nome}",nome),600);
-      etapa="mainMenu";
-    }
-
-    
-    window.onload = ()=>bot("Olá! Eu sou o chat do projeto Agricotec, qual seu nome?");
-    
-    userInput.addEventListener("keydown",e=>{if(e.key==="Enter")handleInput();});
+  }
+}
+ 
+// Reinício do menu principal após cada resposta
+function askMore() {
+  bot(`Posso ajudar em algo mais, ${nome}?`);
+  bot(menuPrincipal.replace("${nome}", nome), 600);
+  etapa = "mainMenu";
+}
+ 
+// Início da conversa ao carregar a página
+window.onload = () =>
+  bot("Olá! Eu sou o chat do projeto Agricotec, qual seu nome?");
+ 
+// Envio com tecla Enter
+userInput.addEventListener("keydown", e => {
+  if (e.key === "Enter") handleInput();
+});
   </script>
 </body>
 </html>
